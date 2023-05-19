@@ -53,6 +53,7 @@ typedef struct {
 /* function definitions used in config.h */
 static void clipcopy(const Arg *);
 static void clippaste(const Arg *);
+static void insert_debug(const Arg *);
 static void numlock(const Arg *);
 static void selpaste(const Arg *);
 static void swapcolors(const Arg *);
@@ -290,6 +291,23 @@ selpaste(const Arg *dummy)
 {
 	XConvertSelection(xw.dpy, XA_PRIMARY, xsel.xtarget, XA_PRIMARY,
 			xw.win, CurrentTime);
+}
+
+void
+insert_debug(const Arg *dummy)
+{
+	char buffer[160];
+	int n;
+
+	n = snprintf(buffer, sizeof buffer,
+	    "Cell %dx%d from ascent %d, descent %d, height %d, width %d,"
+	    " fontsize %lf, defaultfontsize %lf\n",
+	    win.cw, win.ch,
+	    dc.font.ascent, dc.font.descent, dc.font.match->height,
+	    dc.font.width, usedfontsize, defaultfontsize);
+
+	if (n > 0)
+		ttywrite(buffer, n, 1);
 }
 
 void
